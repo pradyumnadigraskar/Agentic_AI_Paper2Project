@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Paper to Project - Result</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1>✅ Project Generated Successfully</h1>
+
+        <h2>🧠 Idea Extracted</h2>
+        <p>{{ idea }}</p>
+
+        <h2>📊 Dataset Found</h2>
+        <div class="dataset-block">
+            {% for line in dataset.split('\n') %}
+                {% if 'http' in line %}
+                    <p>
+                        {{ line.split('URL:')[0] }}
+                        <a href="{{ line.split('URL:')[1] | trim }}" target="_blank" rel="noopener noreferrer">
+                            {{ line.split('URL:')[1] | trim }}
+                        </a>
+                    </p>
+                {% else %}
+                    <p>{{ line }}</p>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        <h2>📁 Project Folder Structure</h2>
+        <pre class="code-block">{{ folder_structure }}</pre>
+
+        <h2>📑 Slide Outline</h2>
+        <pre class="code-block">{{ slides }}</pre>
+
+        <h2>⬇️ Downloads</h2>
+        <ul class="download-links">
+            <li><a href="{{ url_for('download_file', filename=project_file) }}">📦 Download Python Project</a></li>
+            <li><a href="{{ url_for('download_file', filename=ppt_file) }}">📽️ Download Slides (PPTX)</a></li>
+        </ul>
+
+        <a class="back-link" href="/">🔙 Go Back</a>
+    </div>
+</body>
+</html>

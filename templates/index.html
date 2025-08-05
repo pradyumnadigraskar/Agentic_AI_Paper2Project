@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Paper2Project</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1>📄 Paper2Project 🚀</h1>
+        <center>
+        <p class="subtitle">Turn your <strong>Research Paper </strong> into a <strong> Working Project </strong> in minutes!</p>
+        </center>
+
+        <form id="uploadForm" action="/process" method="post" enctype="multipart/form-data" class="upload-form">
+            <div class="form-group">
+                <label for="project_name"> Project Name:</label>
+                <input type="text" name="project_name" id="project_name" required>
+            </div>
+            <br>
+            <div class="form-group">
+                <label for="pdf"> Upload Research Paper (PDF):</label>
+                <input type="file" name="pdf" id="pdf" required>
+            </div>
+            
+            <button type="submit" class="submit-button"> Generate Project</button>
+        </form>
+
+        <!-- Loading animation -->
+        <div id="loading" style="display: none;">
+            <div class="loader"></div>
+            <p>Generating project... Please wait ⏳</p>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('uploadForm');
+        const loading = document.getElementById('loading');
+
+        form.addEventListener('submit', function () {
+            form.style.display = 'none';
+            loading.style.display = 'block';
+        });
+    </script>
+</body>
+</html>
