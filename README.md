@@ -50,7 +50,7 @@ All this, directly from a single PDF! 🧾 ➜ 💻📊
 ---
 
 ## ✅ Result Page
-![Result](static/screenshots/result.png)
+![Result](static/screenshots/Result.png)
 
 ---
 
