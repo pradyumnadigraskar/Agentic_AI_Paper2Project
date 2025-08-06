@@ -94,5 +94,11 @@ Make sure Python 3.10+ is installed.
 
 Install dependencies:
 
+
+
 ```bash
 pip install flask python-pptx
+
+---
+
+Any leads are appreciated—please feel free to contribute and help make this project better.
