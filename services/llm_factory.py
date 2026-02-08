@@ -8,7 +8,7 @@ class LLMProvider:
         if provider == "gemini":
             print("LOG: Initializing Gemini Client...")
             self.client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
-            self.model_id = "gemini-2.0-flash"
+            self.model_id = "gemini-2.5-flash"
 
     def generate(self, prompt: str) -> str:
         if self.provider == "gemini":
