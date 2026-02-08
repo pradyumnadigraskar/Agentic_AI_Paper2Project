@@ -1,61 +1,60 @@
-### app.py
-from flask import Flask, render_template, request, send_file
-import os
-from agents.reader_agent import extract_core_idea
-from agents.dataset_agent import find_dataset
-from agents.codegen_agent import generate_code
-from agents.slides_agent import create_slides, generate_ppt
-from utils.project_witer import save_project_structure
+import os, shutil
+from fastapi import FastAPI, Request, UploadFile, File, Form
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
+from dotenv import load_dotenv
 
-app = Flask(__name__)
-UPLOAD_FOLDER = 'uploads'
-OUTPUT_FOLDER = 'output'
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-os.makedirs(OUTPUT_FOLDER, exist_ok=True)
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+from services.llm_factory import LLMProvider
+from services.reader_agent import extract_core_idea
+from services.slides_agent import create_slides, generate_ppt
+from utils.project_writer import save_project_structure
 
-@app.route('/')
-def index():
-    return render_template('index.html')
+load_dotenv()
+app = FastAPI()
+app.mount("/static", StaticFiles(directory="static"), name="static")
+templates = Jinja2Templates(directory="templates")
 
-@app.route('/process', methods=['POST'])
-def process():
-    file = request.files['pdf']
-    project_name = request.form.get('project_name', 'my_project').replace(" ", "_")
+@app.post("/process")
+async def process(request: Request, project_name: str = Form(...), llm_choice: str = Form("ollama"), pdf: UploadFile = File(...)):
+    print(f"\n--- NEW REQUEST: {project_name} using {llm_choice} ---")
+    try:
+        # Save PDF
+        pdf_path = os.path.join("uploads", pdf.filename)
+        with open(pdf_path, "wb") as buffer:
+            shutil.copyfileobj(pdf.file, buffer)
+        
+        llm = LLMProvider(provider=llm_choice)
+        
+        # Run Agents
+        idea = extract_core_idea(pdf_path, llm)
+        dataset_info = llm.generate(f"Suggest one public dataset for: {idea}")
+        code = llm.generate(f"Write complete Python code for: {idea}")
+        slides_text = create_slides(idea, llm)
+        
+        # Save Files
+        clean_name = project_name.replace(" ", "_")
+        proj_file, struct = save_project_structure(clean_name, idea, code)
+        ppt_file = generate_ppt(clean_name, slides_text)
 
-    filepath = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
-    file.save(filepath)
+        print("LOG: All agents finished. Sending results to UI.\n")
+        return templates.TemplateResponse("result.html", {
+            "request": request, "idea": idea, "dataset": dataset_info,
+            "folder_structure": struct, "slides": slides_text,
+            "project_file": proj_file, "ppt_file": ppt_file
+        })
+    except Exception as e:
+        print(f"ERROR: {str(e)}")
+        return templates.TemplateResponse("index.html", {"request": request, "error": str(e)})
 
-    idea = extract_core_idea(filepath)
-    dataset = find_dataset(idea)
-    code = generate_code(idea, dataset)
-    slides_text = create_slides(idea)
+@app.get("/")
+async def index(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
 
-    project_path, folder_structure = save_project_structure(project_name, idea, code, dataset)
+@app.get("/download/{filename}")
+async def download_file(filename: str):
+    return FileResponse(path=os.path.join("output", filename), filename=filename)
 
-
-    ppt_path = generate_ppt(project_name, slides_text)
-
-    return render_template(
-        'result.html',
-        idea=idea,
-        dataset=dataset,
-        code=code,
-        slides=slides_text,
-        project_file=os.path.basename(project_path),
-        ppt_file=os.path.basename(ppt_path),
-        folder_structure=folder_structure
-
-    )
-
-@app.route('/download/<filename>')
-def download_file(filename):
-    output_dir = os.path.abspath(os.path.join(app.root_path, 'output'))
-    path = os.path.join(output_dir, filename)
-    if not os.path.exists(path):
-        return f"File not found: {path}", 404
-    return send_file(path, as_attachment=True)
-
-
-if __name__ == '__main__':
-    app.run(debug=True)
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="127.0.0.1", port=8000)

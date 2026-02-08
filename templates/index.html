@@ -1,47 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Paper2Project</title>
+    <meta charset="UTF-8"><title>Paper2Project</title>
     <link rel="stylesheet" href="/static/css/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
 </head>
 <body>
+    <div class="bg-glow"></div>
     <div class="container">
-        <h1>📄 Paper2Project 🚀</h1>
-        <center>
-        <p class="subtitle">Turn your <strong>Research Paper </strong> into a <strong> Working Project </strong> in minutes!</p>
-        </center>
-
-        <form id="uploadForm" action="/process" method="post" enctype="multipart/form-data" class="upload-form">
-            <div class="form-group">
-                <label for="project_name"> Project Name:</label>
-                <input type="text" name="project_name" id="project_name" required>
-            </div>
-            <br>
-            <div class="form-group">
-                <label for="pdf"> Upload Research Paper (PDF):</label>
-                <input type="file" name="pdf" id="pdf" required>
-            </div>
+        <h1 class="gradient-text">Paper2Project 🚀</h1>
+        <form action="/process" method="post" enctype="multipart/form-data" id="uploadForm">
+            <input type="text" name="project_name" placeholder="Project Name" required style="width:100%; padding:12px; margin:10px 0; border-radius:8px; background:rgba(255,255,255,0.05); color:white; border:1px solid rgba(255,255,255,0.1);">
             
-            <button type="submit" class="submit-button"> Generate Project</button>
+            <div class="provider-box">
+                <span>Ollama</span>
+                <label class="switch"><input type="checkbox" id="llmToggle"><span class="slider"></span></label>
+                <span>Gemini</span>
+                <input type="hidden" name="llm_choice" id="llm_choice" value="ollama">
+            </div>
+
+            <div class="drop-zone" onclick="document.getElementById('fileInput').click()" style="padding:40px; border:2px dashed #444; border-radius:15px; cursor:pointer;">
+                <p id="fileLabel">Click to select Research PDF</p>
+                <input type="file" name="pdf" id="fileInput" accept=".pdf" hidden required onchange="document.getElementById('fileLabel').innerText = this.files[0].name">
+            </div>
+
+            <button type="submit" class="glow-button">Generate Project ✨</button>
         </form>
 
-        <!-- Loading animation -->
-        <div id="loading" style="display: none;">
-            <div class="loader"></div>
-            <p>Generating project... Please wait ⏳</p>
+        <div id="loading" style="display:none; padding:20px;">
+            <div class="spinner"></div>
+            <p>AI is reading your paper... (Check terminal for progress)</p>
         </div>
     </div>
 
     <script>
-        const form = document.getElementById('uploadForm');
-        const loading = document.getElementById('loading');
-
-        form.addEventListener('submit', function () {
-            form.style.display = 'none';
-            loading.style.display = 'block';
-        });
+        const toggle = document.getElementById('llmToggle');
+        toggle.onchange = () => document.getElementById('llm_choice').value = toggle.checked ? 'gemini' : 'ollama';
+        
+        document.getElementById('uploadForm').onsubmit = function() {
+            this.style.display = 'none';
+            document.getElementById('loading').style.display = 'block';
+        };
     </script>
 </body>
 </html>

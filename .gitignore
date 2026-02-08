@@ -1,6 +1,29 @@
-output
-uploads
-.venv 
-outputs
-js
-/templetas.py/
+# --- Environments ---
+P2P/
+Include/
+Lib/
+Scripts/
+pyvenv.cfg
+.lock
+
+# --- Secrets & Config ---
+.env
+*.local
+
+# --- AI Project Data ---
+uploads/
+output/
+
+# --- Python System Files ---
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.ipynb_checkpoints/
+
+# --- OS Files ---
+.DS_Store
+Thumbs.db
+
+# --- Logs ---
+*.log

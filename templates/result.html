@@ -2,46 +2,188 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Paper to Project - Result</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blueprint Ready | Paper2Project</title>
     <link rel="stylesheet" href="/static/css/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        .wide-container { max-width: 1200px; width: 95%; margin: 40px auto; }
+        
+        /* Bento Grid Layout */
+        .bento-grid {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            grid-template-rows: auto auto;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .bento-item {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 30px;
+            text-align: left;
+            transition: transform 0.3s ease;
+        }
+
+        .bento-item:hover { transform: translateY(-5px); border-color: var(--primary); }
+
+        /* Specific block placements */
+        .block-idea { grid-column: 1 / 2; grid-row: 1 / 2; }
+        .block-dataset { grid-column: 1 / 2; grid-row: 2 / 3; }
+        .block-tech { grid-column: 2 / 3; grid-row: 1 / 3; display: flex; flex-direction: column; }
+
+        .bento-item h3 {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .content-text { line-height: 1.7; color: rgba(255,255,255,0.8); font-size: 0.95rem; }
+
+        .code-box {
+            background: #000;
+            padding: 20px;
+            border-radius: 16px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            color: #10b981;
+            overflow-x: auto;
+            position: relative;
+            flex-grow: 1;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.7rem;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        .copy-btn:hover { background: var(--primary); }
+
+        .slide-preview {
+            background: rgba(0,0,0,0.3);
+            padding: 15px;
+            border-radius: 12px;
+            color: #60a5fa;
+            margin-top: 20px;
+            font-size: 0.85rem;
+            white-space: pre-wrap;
+        }
+
+        .action-bar {
+            margin-top: 40px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .download-btn {
+            text-decoration: none;
+            padding: 16px 32px;
+            border-radius: 14px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .btn-main { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; }
+        .btn-sub { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: white; }
+
+        .download-btn:hover { transform: scale(1.05); box-shadow: 0 15px 30px rgba(0,0,0,0.3); }
+
+        .badge {
+            background: rgba(139, 92, 246, 0.1);
+            color: var(--primary);
+            padding: 6px 16px;
+            border-radius: 100px;
+            font-size: 0.75rem;
+            font-weight: 800;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 900px) {
+            .bento-grid { grid-template-columns: 1fr; }
+            .block-tech { grid-column: 1; grid-row: auto; }
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <h1>✅ Project Generated Successfully</h1>
+    <div class="bg-glow"></div>
+    
+    <div class="wide-container">
+        <header style="text-align: center; margin-bottom: 40px;">
+            <div class="badge">A.I. AGENT PIPELINE COMPLETE</div>
+            <h1 class="gradient-text">Project Blueprint</h1>
+        </header>
 
-        <h2>🧠 Idea Extracted</h2>
-        <p>{{ idea }}</p>
+        <div class="bento-grid">
+            <div class="bento-item block-idea">
+                <h3><span>🧠</span> Core Concept</h3>
+                <div class="content-text">{{ idea }}</div>
+            </div>
 
-        <h2>📊 Dataset Found</h2>
-        <div class="dataset-block">
-            {% for line in dataset.split('\n') %}
-                {% if 'http' in line %}
-                    <p>
-                        {{ line.split('URL:')[0] }}
-                        <a href="{{ line.split('URL:')[1] | trim }}" target="_blank" rel="noopener noreferrer">
-                            {{ line.split('URL:')[1] | trim }}
-                        </a>
-                    </p>
-                {% else %}
-                    <p>{{ line }}</p>
-                {% endif %}
-            {% endfor %}
+            <div class="bento-item block-dataset">
+                <h3><span>📊</span> Data Strategy</h3>
+                <div class="content-text">{{ dataset }}</div>
+            </div>
+
+            <div class="bento-item block-tech">
+                <h3><span>📁</span> Architecture</h3>
+                <div class="code-box">
+                    <button class="copy-btn" onclick="copyCode()">COPY</button>
+                    <pre id="folderStruct"><code>{{ folder_structure }}</code></pre>
+                </div>
+
+                <h3 style="margin-top: 30px;"><span>📽️</span> Presentation Outline</h3>
+                <div class="slide-preview">{{ slides }}</div>
+            </div>
         </div>
 
-        <h2>📁 Project Folder Structure</h2>
-        <pre class="code-block">{{ folder_structure }}</pre>
-
-        <h2>📑 Slide Outline</h2>
-        <pre class="code-block">{{ slides }}</pre>
-
-        <h2>⬇️ Downloads</h2>
-        <ul class="download-links">
-            <li><a href="{{ url_for('download_file', filename=project_file) }}">📦 Download Python Project</a></li>
-            <li><a href="{{ url_for('download_file', filename=ppt_file) }}">📽️ Download Slides (PPTX)</a></li>
-        </ul>
-
-        <a class="back-link" href="/">🔙 Go Back</a>
+        <div class="action-bar">
+            <a href="/download/{{ project_file }}" class="download-btn btn-main">
+                <span>📦</span> Download Builder Script
+            </a>
+            <a href="/download/{{ ppt_file }}" class="download-btn btn-sub">
+                <span>📽️</span> Download PPTX Presentation
+            </a>
+            <a href="/" style="width: 100%; color: rgba(255,255,255,0.4); text-decoration: none; margin-top: 20px; font-size: 0.9rem;">← Process Another Paper</a>
+        </div>
     </div>
+
+    <script>
+        function copyCode() {
+            const text = document.getElementById('folderStruct').innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = document.querySelector('.copy-btn');
+                btn.innerText = 'COPIED!';
+                btn.style.background = '#10b981';
+                setTimeout(() => {
+                    btn.innerText = 'COPY';
+                    btn.style.background = 'rgba(255,255,255,0.1)';
+                }, 2000);
+            });
+        }
+    </script>
 </body>
 </html>
